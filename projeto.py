@@ -1,60 +1,42 @@
-from dotenv import load_dotenv
-load_dotenv()
-
 import streamlit as st
-from dotenv import load_dotenv
-import os
-
 from utils.gemini_client import GeminiClient
-from utils.stf_client import STFClient
-from utils.youtube_client import YouTubeClient
+from utils.stf_client import buscar_decisoes_stf
+from utils.youtube_client import buscar_videos_youtube
 
-load_dotenv()
+st.set_page_config(page_title="STF Explicado por IA", page_icon="⚖️", layout="wide")
 
-st.set_page_config(page_title="STF Assistente (Gemini)", layout="wide")
+st.title("⚖️ STF Explicado por IA")
+st.markdown("Explore decisões reais do Supremo Tribunal Federal explicadas por Inteligência Artificial.")
 
-st.title("Assistente de Jurisprudência — STF (2020–2025)")
+user_query = st.text_input("Digite sua dúvida jurídica:")
 
-user_query = st.text_area("Descreva a questão jurídica (ex.: 'Existe previsão do STF sobre fake news nas eleições 2022?')", height=120)
+if user_query:
+    with st.spinner("Analisando sua dúvida..."):
+        gemini = GeminiClient()
+        tema = gemini.classify_theme(user_query)
+    st.success(f"🧠 Tema identificado: **{tema}**")
 
-col1, col2 = st.columns([2,1])
+    with st.spinner("Buscando decisões no STF..."):
+        decisoes = buscar_decisoes_stf(tema)
 
-with col2:
-    st.write("Parâmetros")
-    max_results = st.slider("Máx. decisões a buscar", min_value=1, max_value=10, value=3)
-
-if st.button("Pesquisar"):
-    if not user_query.strip():
-        st.warning("Digite uma pergunta.")
+    if decisoes.empty:
+        st.warning("Nenhuma decisão encontrada sobre esse tema.")
     else:
-        with st.spinner("Processando com Gemini..."):
-            gemini = GeminiClient()
-            theme = gemini.classify_theme(user_query)   # retorna string curta de tema
-            st.markdown(f"**Tema identificado (por Gemini):** {theme}")
+        st.info(f"Foram encontradas **{len(decisoes)} decisões** relacionadas ao tema **{tema}**.")
 
-        st.info("Buscando decisões relevantes (2020–2025)...")
-        stf = STFClient()
-        results = stf.search_by_query(user_query, theme=theme, year_from=2020, year_to=2025, limit=max_results)
+        ementas = decisoes["ementa"].dropna().tolist()[:10]
 
-        if not results:
-            st.warning("Nenhuma decisão encontrada com os parâmetros atuais.")
-        else:
-            for r in results:
-                st.subheader(r.get("titulo") or r.get("ementa") or "Decisão")
-                st.write(f"**Órgão:** {r.get('orgao','-')}  •  **Data:** {r.get('data','-')}  •  **Relator:** {r.get('relator','-')}")
-                st.write("**Ementa / trecho relevante:**")
-                st.write(r.get("trecho", r.get("ementa","(sem texto)"))[:2000])
+        with st.spinner("Gerando resumo com Gemini..."):
+            resumo = gemini.summarize_decisions(ementas, tema)
+        st.markdown("### 📄 Resumo das decisões do STF")
+        st.write(resumo)
 
-                with st.expander("Resumo explicativo (linguagem simples)"):
-                    summary = gemini.summarize_and_explain(r.get("trecho") or r.get("ementa",""))
-                    st.write(summary)
+        st.markdown("---")
+        st.markdown("### 🎥 Expanda seu aprendizado com vídeos relacionados")
+        videos = buscar_videos_youtube(tema)
 
-            # Sugestão de vídeos
-            st.markdown("---")
-            st.markdown("### Vídeos sugeridos (YouTube)")
-            yt = YouTubeClient()
-            videos = yt.search_videos(query=theme or user_query, max_results=3)
-            for v in videos:
-                st.markdown(f"- [{v['title']}]({v['url']}) — {v['channelTitle']} ({v['publishedAt'][:10]})")
+        for v in videos:
+            st.markdown(f"**[{v['titulo']}]({v['url']})** — *{v['canal']}*")
 
-        st.success("Pronto ✅")
+st.markdown("---")
+st.caption("Desenvolvido por Davi — IA + Dados Abertos do STF + Gemini + YouTube API")
