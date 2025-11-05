@@ -1,3 +1,6 @@
+import os
+os.environ["GOOGLE_API_KEY"] = "AIzaSyCwvLepNrle6uH0cuef7ei4D9hy2aq6Z88"
+
 import streamlit as st
 from dotenv import load_dotenv
 import os
