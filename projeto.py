@@ -39,4 +39,3 @@ if user_query:
             st.markdown(f"**[{v['titulo']}]({v['url']})** — *{v['canal']}*")
 
 st.markdown("---")
-st.caption("Desenvolvido por Davi — IA + Dados Abertos do STF + Gemini + YouTube API")
