@@ -1,5 +1,3 @@
-pip install -r requirements.txt
-
 import streamlit as st
 from utils.gemini_client import GeminiClient
 from utils.stf_client import buscar_decisoes_stf
