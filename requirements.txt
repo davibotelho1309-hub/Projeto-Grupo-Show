@@ -1,7 +1,6 @@
 streamlit
-google-genai          # Google Gen AI SDK (Gemini)
-google-api-python-client
-python-dotenv
-requests
-beautifulsoup4
 pandas
+basedosdados
+python-dotenv
+google-genai==1.46.0
+google-api-python-client
