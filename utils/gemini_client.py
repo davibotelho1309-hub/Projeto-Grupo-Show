@@ -14,7 +14,7 @@ class GeminiClient:
         Classifique o tema jurídico principal da pergunta abaixo:
         Pergunta: "{query}"
         Retorne apenas o tema (ex: Constitucional, Penal, Trabalhista etc.).
-        ""
+        """
         try:
             response = self.client.models.generate_content(
                 model=self.model,
