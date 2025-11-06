@@ -10,7 +10,6 @@ class GeminiClient:
         self.model = "gemini-1.5-flash"
 
     def summarize_text(self, text):
-        """Cria um resumo jurídico de uma decisão."""
         prompt = f"Resuma a decisão do STF abaixo de forma clara e didática:\n\n{text}"
         response = self.client.models.generate_content(
             model=self.model,
@@ -19,7 +18,6 @@ class GeminiClient:
         return response.text.strip()
 
     def classify_theme(self, question):
-        """Classifica o tema jurídico da pergunta."""
         prompt = f"Qual é o tema jurídico principal desta questão?\nPergunta: {question}"
         response = self.client.models.generate_content(
             model=self.model,
