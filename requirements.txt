@@ -1,6 +1,6 @@
 streamlit
+google-genai
 pandas
 basedosdados
-python-dotenv
-google-genai==1.46.0
-google-api-python-client
+google-cloud-bigquery
+requests
