@@ -7,7 +7,7 @@ class GeminiClient:
         if not api_key:
             raise ValueError("A variável de ambiente GEMINI_API_KEY não foi configurada.")
         self.client = genai.Client(api_key=api_key)
-        self.model = "gemini-1.5-flash"
+        self.model = "gemini-1.0-pro"
 
     def summarize_text(self, text):
         prompt = f"Resuma a decisão do STF abaixo de forma clara, concisa e compreensível:\n\n{text}"
