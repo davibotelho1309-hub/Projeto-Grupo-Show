@@ -1,5 +1,6 @@
 streamlit
 google-genai
+google-api-python-client
 pandas
 basedosdados
 google-cloud-bigquery
