@@ -1,5 +1,5 @@
 streamlit
-google-genai
+google-genai==1.50.0
 google-api-python-client
 pandas
 basedosdados
