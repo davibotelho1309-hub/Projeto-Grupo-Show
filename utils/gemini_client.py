@@ -18,10 +18,10 @@ class GeminiClient:
         Pergunta: "{user_query}"
         Responda apenas com o tema (ex: direito civil, liberdade de expressão, etc.)
         """
-        resp = self.client.models.generate_content(
-            model=self.model,
-            contents=[{"role": "user", "parts": [{"text": prompt}]}]
-        )
+       response = self.client.models.generate_content(
+    model=self.model,
+    contents=prompt
+)
         return resp.text.strip()
 
     def summarize_decisions(self, ementas: list[str], tema: str) -> str:
