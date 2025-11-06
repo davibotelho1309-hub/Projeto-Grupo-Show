@@ -10,17 +10,33 @@ class GeminiClient:
         self.model = "gemini-1.5-flash"
 
     def summarize_text(self, text):
-        prompt = f"Resuma a decisão do STF abaixo de forma clara e didática:\n\n{text}"
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=prompt
-        )
-        return response.text.strip()
+        prompt = f"Resuma a decisão do STF abaixo de forma clara, concisa e compreensível:\n\n{text}"
+        try:
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=[
+                    {
+                        "role": "user",
+                        "parts": [{"text": prompt}]
+                    }
+                ]
+            )
+            return response.text.strip()
+        except Exception as e:
+            return f"Erro ao resumir texto: {e}"
 
     def classify_theme(self, question):
-        prompt = f"Qual é o tema jurídico principal desta questão?\nPergunta: {question}"
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=prompt
-        )
-        return response.text.strip()
+        prompt = f"Identifique o tema jurídico principal desta questão e retorne apenas o nome do tema:\n\n{question}"
+        try:
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=[
+                    {
+                        "role": "user",
+                        "parts": [{"text": prompt}]
+                    }
+                ]
+            )
+            return response.text.strip()
+        except Exception as e:
+            return f"Erro ao classificar tema: {e}"
