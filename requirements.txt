@@ -1,7 +1,8 @@
 streamlit==1.39.0
 pandas
-basedosdados
-google-auth>=2.30.0
-google-cloud-bigquery>=3.18.0
-google-genai>=1.50.0
+basedosdados==1.7.4
+google-auth==2.35.0
+google-cloud-bigquery==3.23.0
 requests
+# Biblioteca Gemini — versão segura e leve
+google-genai==1.48.0
