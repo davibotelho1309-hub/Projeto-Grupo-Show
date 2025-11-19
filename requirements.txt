@@ -1,0 +1,7 @@
+streamlit
+pandas
+plotly
+basedosdados
+google-cloud-bigquery
+google-cloud-bigquery-storage
+db-dtypes
