@@ -1,7 +1,3 @@
-streamlit
-pandas
-plotly
-basedosdados
-google-cloud-bigquery
-google-cloud-bigquery-storage
-db-dtypes
+streamlit>=1.24
+pandas>=1.5
+altair>=4.2.2
