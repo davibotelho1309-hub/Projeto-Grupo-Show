@@ -6,9 +6,7 @@ st.set_page_config(page_title="Análise DOU", layout="wide")
 
 st.title("📄 Análise de Publicações do Diário Oficial da União")
 
-# ============================
-# Carregamento dos dados
-# ============================
+
 @st.cache_data
 def load_data():
     df = pd.read_json("dados.json")
@@ -18,24 +16,19 @@ df = load_data()
 
 st.subheader("Filtros das Publicações")
 
-# ============================
-# FILTROS
-# ============================
 
-# filtro por tipo_edição
+
 tipo_lista = sorted(df["tipo_edicao"].dropna().unique())
 tipo_escolhido = st.multiselect("Filtrar por Tipo de Edição:", tipo_lista)
 
-# filtro por órgão
+
 orgao_lista = sorted(df["orgao"].dropna().unique())
 orgao_escolhido = st.multiselect("Filtrar por Órgão:", orgao_lista)
 
-# filtro por ementa (texto)
+
 ementa_busca = st.text_input("Buscar na Ementa (texto livre):")
 
-# ============================
-# APLICAÇÃO DOS FILTROS
-# ============================
+
 
 df_filtrado = df.copy()
 
@@ -50,18 +43,14 @@ if ementa_busca:
         df_filtrado["ementa"].str.contains(ementa_busca, case=False, na=False)
     ]
 
-# ============================
-# RESULTADOS
-# ============================
+
 
 st.subheader("Resultados Filtrados")
 st.write(f"Total de publicações encontradas: **{len(df_filtrado)}**")
 
 st.dataframe(df_filtrado, use_container_width=True)
 
-# ============================
-# GRÁFICO POR TIPO DE EDIÇÃO
-# ============================
+
 
 st.subheader("📊 Quantidade de Publicações por Tipo de Edição")
 
@@ -81,9 +70,7 @@ else:
 
     st.altair_chart(grafico_tipo, use_container_width=True)
 
-# ============================
-# GRÁFICO POR ÓRGÃO
-# ============================
+
 
 st.subheader("📊 Quantidade de Publicações por Órgão")
 
