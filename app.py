@@ -9,7 +9,7 @@ st.title("📄 Análise de Publicações do Diário Oficial da União")
 
 @st.cache_data
 def load_data():
-    df = pd.read_json("dados.json")
+    df = pd.read_json("projeto_p2.json")
     return df
 
 df = load_data()
