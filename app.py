@@ -9,7 +9,7 @@ st.title("📄 Análise das Primeiras 1000 Publicações dos Ministérios do Gov
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv("projeto_p2.csv")
+    df = pd.read_csv("projeto_pf.csv")
     return df
 
 df = load_data()
