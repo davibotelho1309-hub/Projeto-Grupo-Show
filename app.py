@@ -4,7 +4,7 @@ import altair as alt
 
 st.set_page_config(page_title="Análise DOU", layout="wide")
 
-st.title("📄 Análise de Publicações do Diário Oficial da União")
+st.title("📄 Análise das Primeiras 1000 Publicações dos Ministérios do Governo Lula")
 
 
 @st.cache_data
@@ -52,7 +52,7 @@ st.dataframe(df_filtrado, use_container_width=True)
 
 
 
-st.subheader("📊 Quantidade de Publicações por Tipo de Edição")
+st.subheader("📊 Quantidade de Publicações por Data de Publicação")
 
 if df_filtrado.empty:
     st.info("Nenhuma publicação encontrada para gerar o gráfico.")
@@ -61,10 +61,10 @@ else:
         alt.Chart(df_filtrado)
         .mark_bar()
         .encode(
-            x=alt.X("tipo_edicao:N", title="Tipo de Edição"),
+            x=alt.X("data_publicacao:N", title="Data de Publicação"),
             y=alt.Y("count():Q", title="Quantidade"),
-            tooltip=["tipo_edicao", "count()"],
-            color="tipo_edicao:N"
+            tooltip=["data_publicacao", "count()"],
+            color="data_publicacao:N"
         )
     )
 
