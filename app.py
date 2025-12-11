@@ -4,7 +4,7 @@ import altair as alt
 
 st.set_page_config(page_title="Análise DOU", layout="wide")
 
-st.title("📄 Análise das Primeiras 1000 Publicações dos Ministérios do Governo Lula")
+st.title("📄 Análise das Primeiras 2000 Publicações dos Ministérios do Governo Lula")
 
 
 @st.cache_data
