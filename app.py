@@ -101,3 +101,126 @@ with col3:
     if not df_filtrado.empty and "data_publicacao" in df_filtrado.columns:
         datas_unicas = sorted(df_filtrado["data_publicacao"].dropna().unique())
         if len(datas_unicas) > 0:
+            data_inicial = datas_unicas[0]
+            data_final = datas_unicas[-1]
+            periodo = f"{data_inicial} → {data_final}"
+        else:
+            periodo = "N/A"
+    else:
+        periodo = "N/A"
+
+    st.metric(
+        label="Período das Publicações",
+        value=periodo
+    )
+
+# ==============================
+# ABAS: TABELA E GRÁFICOS
+# ==============================
+tab_tabela, tab_data, tab_orgao = st.tabs(
+    ["📋 Tabela de Dados", "📆 Publicações por Data", "🏢 Publicações por Órgão"]
+)
+
+# --------- TABELA ---------
+with tab_tabela:
+    st.subheader("📋 Tabela de Publicações Filtradas")
+    st.write(f"Total de publicações encontradas: **{len(df_filtrado)}**")
+
+    if df_filtrado.empty:
+        st.info("Nenhuma publicação encontrada com os filtros selecionados.")
+    else:
+        st.dataframe(df_filtrado, use_container_width=True)
+
+# --------- GRÁFICO POR DATA ---------
+with tab_data:
+    st.subheader("📊 Quantidade de Publicações por Data de Publicação")
+
+    if df_filtrado.empty:
+        st.info("Nenhuma publicação encontrada para gerar o gráfico.")
+    else:
+        grafico_tipo = (
+            alt.Chart(df_filtrado)
+            .mark_bar()
+            .encode(
+                x=alt.X("data_publicacao:N", title="Data de Publicação"),
+                y=alt.Y("count():Q", title="Quantidade"),
+                color=alt.Color(
+                    "data_publicacao:N",
+                    legend=None  # cada data com uma cor diferente, sem poluir com legenda
+                ),
+                tooltip=["data_publicacao", "count()"]
+            )
+            .properties(height=400)
+        )
+
+        st.altair_chart(grafico_tipo, use_container_width=True)
+
+# --------- GRÁFICO POR ÓRGÃO ---------
+with tab_orgao:
+    st.subheader("📊 Quantidade de Publicações por Órgão")
+
+    if df_filtrado.empty:
+        st.info("Nenhuma publicação encontrada para gerar o gráfico de órgãos.")
+    else:
+        # Slider para escolher quantos órgãos mostrar
+        top_n = st.slider(
+            "Quantos órgãos exibir (ordenados do que mais publicou para o que menos)?",
+            min_value=5,
+            max_value=30,
+            value=10,
+            step=1
+        )
+
+        # Agrupa, conta e pega apenas o Top N
+        df_orgao_count = (
+            df_filtrado
+            .groupby("orgao")
+            .size()
+            .reset_index(name="quantidade")
+            .sort_values("quantidade", ascending=False)
+            .head(top_n)
+        )
+
+        st.write(
+            f"Exibindo os **{len(df_orgao_count)}** órgãos com maior número de publicações."
+        )
+
+        # Gráfico de barras horizontais com uma cor diferente para cada órgão
+        base = (
+            alt.Chart(df_orgao_count)
+            .mark_bar()
+            .encode(
+                x=alt.X("quantidade:Q", title="Quantidade de publicações"),
+                y=alt.Y("orgao:N", sort="-x", title="Órgão"),
+                color=alt.Color(
+                    "orgao:N",
+                    legend=None  # cada órgão com uma cor, legenda omitida para não poluir
+                ),
+                tooltip=["orgao", "quantidade"]
+            )
+            .properties(
+                height=30 * len(df_orgao_count)
+            )
+        )
+
+        # Rótulo com o número na ponta da barra
+        text = base.mark_text(
+            align="left",
+            baseline="middle",
+            dx=3
+        ).encode(
+            text="quantidade:Q"
+        )
+
+        chart_final = base + text
+
+        st.altair_chart(chart_final, use_container_width=True)
+
+# ==============================
+# RODAPÉ
+# ==============================
+st.markdown("---")
+st.caption(
+    "Painel desenvolvido para análise exploratória das publicações no DOU. "
+    "Ajuste os filtros para refinar os resultados."
+)
