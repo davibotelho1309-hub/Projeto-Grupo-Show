@@ -171,3 +171,12 @@ with tab_orgao:
         )
 
         st.altair_chart(grafico_orgao, use_container_width=True)
+
+# ==============================
+# RODAPÉ
+# ==============================
+st.markdown("---")
+st.caption(
+    "Painel desenvolvido para análise exploratória das publicações no DOU. "
+    "Ajuste os filtros para refinar os resultados."
+)
