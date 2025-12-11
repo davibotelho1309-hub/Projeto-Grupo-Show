@@ -140,15 +140,20 @@ with tab_data:
         st.info("Nenhuma publicação encontrada para gerar o gráfico.")
     else:
         grafico_tipo = (
-            alt.Chart(df_filtrado)
-            .mark_bar()
-            .encode(
-                x=alt.X("data_publicacao:N", title="Data de Publicação"),
-                y=alt.Y("count():Q", title="Quantidade"),
-                tooltip=["data_publicacao", "count()"]
-            )
-            .properties(height=400)
-        )
+    alt.Chart(df_filtrado)
+    .mark_bar()
+    .encode(
+        x=alt.X("data_publicacao:N", title="Data de Publicação"),
+        y=alt.Y("count():Q", title="Quantidade"),
+        color=alt.Color(
+            "data_publicacao:N",
+            legend=None  # muitas datas geram uma legenda gigante, melhor esconder
+        ),
+        tooltip=["data_publicacao", "count()"]
+    )
+    .properties(height=400)
+)
+
 
         st.altair_chart(grafico_tipo, use_container_width=True)
 
@@ -181,18 +186,22 @@ with tab_orgao:
         st.write(f"Exibindo os **{len(df_orgao_count)}** órgãos com maior número de publicações.")
 
         # Gráfico de barras horizontais
-        base = (
-            alt.Chart(df_orgao_count)
-            .mark_bar()
-            .encode(
-                x=alt.X("quantidade:Q", title="Quantidade de publicações"),
-                y=alt.Y("orgao:N", sort="-x", title="Órgão"),
-                tooltip=["orgao", "quantidade"]
-            )
-            .properties(
-                height=30 * len(df_orgao_count)  # ajusta altura conforme o número de barras
-            )
-        )
+       base = (
+    alt.Chart(df_orgao_count)
+    .mark_bar()
+    .encode(
+        x=alt.X("quantidade:Q", title="Quantidade de publicações"),
+        y=alt.Y("orgao:N", sort="-x", title="Órgão"),
+        color=alt.Color(
+            "orgao:N",
+            legend=None  # oculta a legenda para não ficar poluído
+        ),
+        tooltip=["orgao", "quantidade"]
+    )
+    .properties(
+        height=30 * len(df_orgao_count)
+    )
+)
 
         # Rótulo com o número na ponta da barra
         text = base.mark_text(
