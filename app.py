@@ -159,24 +159,50 @@ with tab_orgao:
     if df_filtrado.empty:
         st.info("Nenhuma publicação encontrada para gerar o gráfico de órgãos.")
     else:
-        grafico_orgao = (
-            alt.Chart(df_filtrado)
-            .mark_bar()
-            .encode(
-                x=alt.X("orgao:N", title="Órgão", sort="-y"),
-                y=alt.Y("count():Q", title="Quantidade"),
-                tooltip=["orgao", "count()"]
-            )
-            .properties(height=400)
+        # Slider para escolher quantos órgãos mostrar
+        top_n = st.slider(
+            "Quantos órgãos exibir (ordenados do que mais publicou para o que menos)?",
+            min_value=5,
+            max_value=30,
+            value=10,
+            step=1
         )
 
-        st.altair_chart(grafico_orgao, use_container_width=True)
+        # Agrupa, conta e pega apenas o Top N
+        df_orgao_count = (
+            df_filtrado
+            .groupby("orgao")
+            .size()
+            .reset_index(name="quantidade")
+            .sort_values("quantidade", ascending=False)
+            .head(top_n)
+        )
 
-# ==============================
-# RODAPÉ
-# ==============================
-st.markdown("---")
-st.caption(
-    "Painel desenvolvido para análise exploratória das publicações no DOU. "
-    "Ajuste os filtros para refinar os resultados."
-)
+        st.write(f"Exibindo os **{len(df_orgao_count)}** órgãos com maior número de publicações.")
+
+        # Gráfico de barras horizontais
+        base = (
+            alt.Chart(df_orgao_count)
+            .mark_bar()
+            .encode(
+                x=alt.X("quantidade:Q", title="Quantidade de publicações"),
+                y=alt.Y("orgao:N", sort="-x", title="Órgão"),
+                tooltip=["orgao", "quantidade"]
+            )
+            .properties(
+                height=30 * len(df_orgao_count)  # ajusta altura conforme o número de barras
+            )
+        )
+
+        # Rótulo com o número na ponta da barra
+        text = base.mark_text(
+            align="left",
+            baseline="middle",
+            dx=3  # deslocamento horizontal do texto em relação à barra
+        ).encode(
+            text="quantidade:Q"
+        )
+
+        chart_final = base + text
+
+        st.altair_chart(chart_final, use_container_width=True)
