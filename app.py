@@ -186,7 +186,7 @@ with tab_orgao:
         st.write(f"Exibindo os **{len(df_orgao_count)}** órgãos com maior número de publicações.")
 
         # Gráfico de barras horizontais
-       base = (
+      base = (
     alt.Chart(df_orgao_count)
     .mark_bar()
     .encode(
